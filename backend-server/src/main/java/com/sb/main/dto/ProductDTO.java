@@ -1,6 +1,8 @@
 package com.sb.main.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -17,9 +19,9 @@ public class ProductDTO {
     @Size(min = 5, max = 30)
     @NotBlank(message = "Product Description is Mandatory")
     private String description;
-    @NotBlank(message = "Product Price is Mandatory")
+    @NotNull(message = "Product Price is Mandatory")
+    @Positive(message = "Price must be greater than 0")
     private Double price;
     @NotBlank(message = "Product Category is Mandatory")
     private String category;
-
 }

@@ -28,7 +28,7 @@ public class Address {
     private String city;
 
     @NotBlank(message = "PinCode is Mandatory")
-    private String PinCode;
+    private String pinCode;
 
     @Size(max = 20)
     @NotBlank(message = "State Name Mandatory")

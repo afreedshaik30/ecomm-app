@@ -31,7 +31,7 @@ public class Order {
     private List<OrderItem> orderItem= new ArrayList<>();
 
     @OneToOne
-    @JoinColumn(name="Payment_id")
+    @JoinColumn(name="payment_id")
     private Payment payment;
 
 //    @OneToOne

@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -57,7 +58,7 @@ public class CartServiceImpl implements CartService {
             cartItem.setCart(userCart);
             userCart.getCartItems().add(cartItem);
 
-            userCart.setTotalAmount(calculateCartTotal(cartItems));
+            userCart.setTotalAmount(calculateCartTotal(userCart.getCartItems()));
             cartRepository.save(userCart);
             return userCart;
 
@@ -142,11 +143,10 @@ public class CartServiceImpl implements CartService {
 
         int quantity = cartItemToUpdate.getQuantity();
         if(quantity==1){
-            throw new CartException("Product can not be Further decresse...");
+            throw new CartException("Product quantity cannot be decreased further.");
         }
         if (quantity > 1) {
             cartItemToUpdate.setQuantity(quantity - 1);
-
 
             userCart.setCartItems(cartItems);
             userCart.setTotalAmount(calculateCartTotal(cartItems));
@@ -184,20 +184,22 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public Cart getAllCartProduct(Integer cartId) throws CartException {
-        Cart existingCart = cartRepository.findById(cartId).orElseThrow(() -> new CartException("Cart Not Found"));
+        Cart existingCart = cartRepository.findById(cartId)
+                .orElseThrow(() -> new CartException("Cart Not Found"));
 
         List<CartItem> cartItems = existingCart.getCartItems();
-        List<Product> products = new ArrayList<>();
 
-        for (CartItem cartItem : cartItems) {
-            if (cartItem.getCart().getCartId() == cartId) {
-                Product product = cartItem.getProduct();
-                products.add(product);
-            }
-        }
-        if(products.isEmpty()){
+        // Use stream to extract products
+        List<Product> products = cartItems.stream()
+                .filter(item -> item.getCart().getCartId().equals(cartId))
+                .map(CartItem::getProduct)
+                .toList();
+
+        if (products.isEmpty()) {
             throw new CartException("Cart is Empty...");
         }
+
         return existingCart;
     }
+
 }

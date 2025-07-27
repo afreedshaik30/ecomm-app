@@ -10,6 +10,8 @@ import com.sb.main.exception.UserException;
 import com.sb.main.model.User;
 import com.sb.main.service.Interface.UserService;
 import lombok.AllArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -21,6 +23,8 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+//  private final PasswordEncoder passwordEncoder;
+    private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class); // Add logger
 
     @Override
     public User getUserByEmailId(String emailId) throws UserException {
@@ -33,7 +37,7 @@ public class UserServiceImpl implements UserService {
             throw new UserException("Customer Can't be Null");
         Optional<User> findByEmail = userRepository.findByEmail(customer.getEmail());
         if (findByEmail.isPresent()) {
-            System.out.println("inside add user method");
+            logger.info("Inside add user method");
             throw new RuntimeException("Email already Register");
         }
 
@@ -41,7 +45,8 @@ public class UserServiceImpl implements UserService {
         newCustomer.setFullName(customer.getFullName());
         newCustomer.setPhoneNumber(customer.getPhoneNumber());
         newCustomer.setEmail(customer.getEmail());
-        newCustomer.setPassword(customer.getPassword());
+//        newCustomer.setPassword(customer.getPassword());
+//        newCustomer.setPassword(passwordEncoder.encode(customer.getPassword()));
         newCustomer.setRole(UserRole.ROLE_USER);
         newCustomer.setRegisteredAt(LocalDateTime.now());
         newCustomer.setUserAccountStatus(UserAccountStatus.ACTIVE);
@@ -54,14 +59,15 @@ public class UserServiceImpl implements UserService {
             throw new UserException("Admin Can't be Null");
         Optional<User> findByEmail = userRepository.findByEmail(admin.getEmail());
         if (findByEmail.isPresent()) {
-            System.out.println("inside add user method");
+            logger.info("Inside add user method");
             throw new RuntimeException("Email Already Registered");
         }
         User newAdmin = new User();
         newAdmin.setFullName(admin.getFullName());
         newAdmin.setPhoneNumber(admin.getPhoneNumber());
         newAdmin.setEmail(admin.getEmail());
-        newAdmin.setPassword(admin.getPassword());
+//        newAdmin.setPassword(admin.getPassword());
+//        newAdmin.setPassword(passwordEncoder.encode(admin.getPassword()));
         newAdmin.setRole(UserRole.ROLE_ADMIN);
         newAdmin.setRegisteredAt(LocalDateTime.now());
         newAdmin.setUserAccountStatus(UserAccountStatus.ACTIVE);
@@ -82,7 +88,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public String deactivateUser(Integer userId) throws UserException {
         User existingUser = userRepository.findById(userId).orElseThrow(() -> new UserException("User not found"));
-        existingUser.setUserAccountStatus(UserAccountStatus.DEACTIVETE);
+        existingUser.setUserAccountStatus(UserAccountStatus.DEACTIVATED);
         userRepository.save(existingUser);
         return "Account deactivet Succesfully";
     }

@@ -10,6 +10,7 @@ import com.sb.main.service.Interface.OrderService;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -27,6 +28,7 @@ public class OrderServiceImpl implements OrderService {
     private final CartRepository cartRepository;
     private final CartItemRepository cartItemRepository;
 
+    @Transactional
     @Override
     public OrderDTO placeOrder(Integer userId) throws OrderException {
         User existingUser = userRepository.findById(userId)

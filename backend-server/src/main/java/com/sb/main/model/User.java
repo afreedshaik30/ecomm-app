@@ -60,5 +60,4 @@ public class User {
 //        String hashedPassword = passwordEncoder.encode(newPassword);
 //        this.setPassword(hashedPassword);
 //    }
-
 }

@@ -15,46 +15,48 @@ import com.sb.main.service.Interface.PaymentService;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
-@Service
-@RequiredArgsConstructor
-public class PaymentServiceImpl implements PaymentService {
+    @Service
+    @RequiredArgsConstructor
+    public class PaymentServiceImpl implements PaymentService {
 
-    private final PaymentRepository paymentRepository;
-    private final UserRepository userRepository;
-    private final OrderRepository orderRepository;
+        private final PaymentRepository paymentRepository;
+        private final UserRepository userRepository;
+        private final OrderRepository orderRepository;
 
-    @Override
-    public Payment makePayment(Integer orderId, Integer userId) throws PaymentException {
+        @Transactional
+        @Override
+        public Payment makePayment(Integer orderId, Integer userId) throws PaymentException {
 
-        User existingUser = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException("User not found in the database."));
+            User existingUser = userRepository.findById(userId)
+                    .orElseThrow(() -> new UserException("User not found in the database."));
 
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new PaymentException("Order not found in the database."));
+            Order order = orderRepository.findById(orderId)
+                    .orElseThrow(() -> new PaymentException("Order not found in the database."));
 
-        Payment payment = new Payment();
-        payment.setPaymentAmount(order.getTotalAmount());
-        payment.setPaymentDate(LocalDateTime.now());
-        payment.setPaymentMethod(PaymentMethod.UPI); // You may replace with actual selected method
-        payment.setPaymentStatus(PaymentStatus.SUCCESSFUL); // Assume payment success here
-        payment.setUser(existingUser);
-        payment.setOrder(order);
+            Payment payment = new Payment();
+            payment.setPaymentAmount(order.getTotalAmount());
+            payment.setPaymentDate(LocalDateTime.now());
+            payment.setPaymentMethod(PaymentMethod.UPI); // You may replace with actual selected method
+            payment.setPaymentStatus(PaymentStatus.SUCCESSFUL); // Assume payment success here
+            payment.setUser(existingUser);
+            payment.setOrder(order);
 
-        // Save payment first
-        paymentRepository.save(payment);
+            // Save payment first
+            paymentRepository.save(payment);
 
-        // Link payment to order and update status
-        order.setPayment(payment);
-        order.setStatus(OrderStatus.SHIPPED);
-        orderRepository.save(order);
+            // Link payment to order and update status
+            order.setPayment(payment);
+            order.setStatus(OrderStatus.SHIPPED);
+            orderRepository.save(order);
 
-        // Link payment to user
-        existingUser.getPayments().add(payment);
-        userRepository.save(existingUser);
+            // Link payment to user
+            existingUser.getPayments().add(payment);
+            userRepository.save(existingUser);
 
-        return payment;
+            return payment;
+        }
     }
-}
