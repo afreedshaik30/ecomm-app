@@ -14,7 +14,7 @@ import java.util.List;
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer pid;
+    private Integer productId;
 
     @NotBlank(message = "Product name is Mandatory")
     private String name;
