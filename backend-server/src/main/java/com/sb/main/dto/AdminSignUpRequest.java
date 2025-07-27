@@ -15,7 +15,6 @@ public class AdminSignUpRequest {
     private String phoneNumber;
 
     @NotBlank(message = "Email Id Is Mandatory")
-    @Column(unique = true)
     private String email;
 
     @NotBlank(message = "Password Is Mandatory")

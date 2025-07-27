@@ -3,6 +3,8 @@ package com.sb.main.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.Data;
 
 import java.util.ArrayList;
@@ -27,7 +29,8 @@ public class Product {
     @NotBlank(message = "Product description is Mandatory")
     private String description;
 
-    @NotBlank(message = "Product Price is Mandatory")
+    @NotNull(message = "Product Price is Mandatory")
+    @Positive(message = "Price must be greater than 0")
     private Double price;
 
     @NotBlank(message = "Product Category is Mandatory")

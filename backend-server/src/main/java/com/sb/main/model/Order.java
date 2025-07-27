@@ -27,8 +27,8 @@ public class Order {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany( cascade = CascadeType.ALL,fetch = FetchType.LAZY)
-    private List<OrderItem> orderItem= new ArrayList<>();
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<OrderItem> orderItem = new ArrayList<>();
 
     @OneToOne
     @JoinColumn(name="payment_id")

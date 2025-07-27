@@ -6,6 +6,7 @@ import com.sb.main.enums.UserAccountStatus;
 import com.sb.main.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -56,8 +57,8 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Payment> payments = new ArrayList<>();
 
-//    public void updatePassword(String newPassword, PasswordEncoder passwordEncoder) {
-//        String hashedPassword = passwordEncoder.encode(newPassword);
-//        this.setPassword(hashedPassword);
-//    }
+    public void updatePassword(String newPassword, PasswordEncoder passwordEncoder) {
+        String hashedPassword = passwordEncoder.encode(newPassword);
+        this.setPassword(hashedPassword);
+    }
 }

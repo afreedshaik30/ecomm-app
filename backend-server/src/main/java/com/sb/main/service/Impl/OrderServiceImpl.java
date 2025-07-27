@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -66,8 +67,8 @@ public class OrderServiceImpl implements OrderService {
         orderData.setOrderAmount(newOrder.getTotalAmount());
         orderData.setStatus(newOrder.getStatus().name());
         orderData.setPaymentStatus("PENDING");
-        orderData.setOrderDate(newOrder.getOrderDate().toString());
-        return orderData;
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        orderData.setOrderDate(newOrder.getOrderDate().format(formatter));        return orderData;
     }
 
     @Override

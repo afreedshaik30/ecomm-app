@@ -19,17 +19,17 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
-    @Service
-    @RequiredArgsConstructor
-    public class PaymentServiceImpl implements PaymentService {
+@Service
+@RequiredArgsConstructor
+public class PaymentServiceImpl implements PaymentService {
 
-        private final PaymentRepository paymentRepository;
-        private final UserRepository userRepository;
-        private final OrderRepository orderRepository;
+    private final PaymentRepository paymentRepository;
+    private final UserRepository userRepository;
+    private final OrderRepository orderRepository;
 
-        @Transactional
-        @Override
-        public Payment makePayment(Integer orderId, Integer userId) throws PaymentException {
+    @Transactional
+    @Override
+    public Payment makePayment(Integer orderId, Integer userId) throws PaymentException {
 
             User existingUser = userRepository.findById(userId)
                     .orElseThrow(() -> new UserException("User not found in the database."));

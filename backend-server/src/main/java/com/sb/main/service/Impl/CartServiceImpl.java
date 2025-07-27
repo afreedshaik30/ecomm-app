@@ -13,11 +13,12 @@ import com.sb.main.repository.ProductRepository;
 import com.sb.main.repository.UserRepository;
 import com.sb.main.service.Interface.CartService;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+
 
 @Service
 @RequiredArgsConstructor
@@ -27,7 +28,7 @@ public class CartServiceImpl implements CartService {
     private final CartItemRepository cartItemRepository;
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
-
+    private static final Logger logger = LoggerFactory.getLogger(CartServiceImpl.class);
     @Override
     public Cart addProductToCart(Integer userId, Integer productId) throws CartException {
 
@@ -45,8 +46,8 @@ public class CartServiceImpl implements CartService {
             if (cartItems != null) {
                 System.out.println("cart item imside loop...");
                 for (int i = 0; i < cartItems.size(); i++) {
-                    System.out.println("inside loop");
-                    if (cartItems.get(i).getProduct().getProductId() == productId&&
+                    logger.debug("Inside loop checking cart items");
+                    if (cartItems.get(i).getProduct().getProductId().equals(productId) &&
                             cartItems.get(i).getCart().getCartId()==userCart.getCartId()) {
                         throw new CartException("Product Already in the Cart,Please Increase the Quantity");
                     }

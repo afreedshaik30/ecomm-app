@@ -12,6 +12,7 @@ import com.sb.main.service.Interface.UserService;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -23,7 +24,7 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-//  private final PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
     private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class); // Add logger
 
     @Override
@@ -37,7 +38,7 @@ public class UserServiceImpl implements UserService {
             throw new UserException("Customer Can't be Null");
         Optional<User> findByEmail = userRepository.findByEmail(customer.getEmail());
         if (findByEmail.isPresent()) {
-            logger.info("Inside add user method");
+            logger.info("Inside add customer method");
             throw new RuntimeException("Email already Register");
         }
 
@@ -46,7 +47,7 @@ public class UserServiceImpl implements UserService {
         newCustomer.setPhoneNumber(customer.getPhoneNumber());
         newCustomer.setEmail(customer.getEmail());
 //        newCustomer.setPassword(customer.getPassword());
-//        newCustomer.setPassword(passwordEncoder.encode(customer.getPassword()));
+        newCustomer.setPassword(passwordEncoder.encode(customer.getPassword()));
         newCustomer.setRole(UserRole.ROLE_USER);
         newCustomer.setRegisteredAt(LocalDateTime.now());
         newCustomer.setUserAccountStatus(UserAccountStatus.ACTIVE);
@@ -59,7 +60,7 @@ public class UserServiceImpl implements UserService {
             throw new UserException("Admin Can't be Null");
         Optional<User> findByEmail = userRepository.findByEmail(admin.getEmail());
         if (findByEmail.isPresent()) {
-            logger.info("Inside add user method");
+            logger.info("Inside add admin method");
             throw new RuntimeException("Email Already Registered");
         }
         User newAdmin = new User();
@@ -67,7 +68,7 @@ public class UserServiceImpl implements UserService {
         newAdmin.setPhoneNumber(admin.getPhoneNumber());
         newAdmin.setEmail(admin.getEmail());
 //        newAdmin.setPassword(admin.getPassword());
-//        newAdmin.setPassword(passwordEncoder.encode(admin.getPassword()));
+        newAdmin.setPassword(passwordEncoder.encode(admin.getPassword()));
         newAdmin.setRole(UserRole.ROLE_ADMIN);
         newAdmin.setRegisteredAt(LocalDateTime.now());
         newAdmin.setUserAccountStatus(UserAccountStatus.ACTIVE);
@@ -78,7 +79,7 @@ public class UserServiceImpl implements UserService {
     public User changePassword(Integer userId, UpdatePasswordRequest customer) throws UserException {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserException("User not found"));
         if (customer.getNewPassword().length() >= 5 && customer.getNewPassword().length() <= 10) {
-//            user.updatePassword(customer.getNewPassword(), passwordEncoder);
+            user.updatePassword(customer.getNewPassword(), passwordEncoder);
             return userRepository.save(user);
         } else {
             throw new UserException("provide valid  password");

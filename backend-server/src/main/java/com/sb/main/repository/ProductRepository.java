@@ -1,6 +1,8 @@
 package com.sb.main.repository;
 
 import com.sb.main.model.Product;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -21,4 +23,6 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     // Dynamic query method - filter by name containing keyword, sorted
     List<Product> findAllByNameContainingIgnoreCase(String keyword, Sort sort);
 
+    // Pagination
+    Page<Product> findByNameContainingIgnoreCase(String name, Pageable pageable);
 }

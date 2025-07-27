@@ -5,7 +5,10 @@ import com.sb.main.dto.ProductDTO;
 import com.sb.main.exception.ProductException;
 import com.sb.main.model.Product;
 import com.sb.main.service.Interface.ProductService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +22,7 @@ public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
 
     @Override
-    public Product addProduct(Product product) throws ProductException {
+    public Product addProduct(@Valid ProductDTO product) throws ProductException {
         if (product == null)
             throw new ProductException("Product Can not be Null");
         return productRepository.save(product);
@@ -95,5 +98,13 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Product getSingleProduct(Integer productId) {
         return productRepository.findById(productId).orElseThrow(() -> new ProductException("Product not found"));
+    }
+    @Override
+    public Page<Product> getAllProductsPaginated(String keyword, Pageable pageable) {
+        if (keyword != null && !keyword.isBlank()) {
+            return productRepository.findByNameContainingIgnoreCase(keyword, pageable);
+        } else {
+            return productRepository.findAll(pageable);
+        }
     }
 }
