@@ -34,17 +34,11 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-                .cors(Customizer.withDefaults()) // CORS enabled if cors config bean exists
+                .cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(
-                                "/bmart/auth/login",      // Login
-                                         "/bmart/customers",       // Customer signup
-                                         "/bmart/admin",           // Admin signup
-                                         "/swagger-ui.html",       // Swagger UI
-                                         "/swagger-ui/**",
-                                         "/v3/api-docs/**"
-                        ).permitAll()
+                        .requestMatchers(HttpMethod.POST, "/bmart/admin").permitAll()  // ✅ Allow POST for admin signup
+                        .requestMatchers("/bmart/auth/login", "/bmart/customers").permitAll()
                         .requestMatchers(HttpMethod.GET, "/bmart/products/**").permitAll()
                         .anyRequest().authenticated()
                 )
