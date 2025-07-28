@@ -1,6 +1,36 @@
-# 🛒 Bmart eCommerce Backend
 
-This is a Spring Boot-based backend API for an eCommerce platform named **Bmart**. It supports user and admin authentication, product catalog management, cart and order functionality, secure payments, and address handling.
+# 📦 B-Mart E-Commerce Application
+
+A full-stack e-commerce app with user registration, JWT authentication, admin panel, cart, orders, and product management.
+
+---
+
+## 🛠️ Tech Stack
+
+| Layer        | Technology                   |
+|-------------|------------------------------|
+| Frontend     | React (Vite), Axios, React Router |
+| Backend      | Spring Boot, Spring Data JPA, Spring Security, JWT, REST APIs, Maven |
+| Database     | MySQL                        |
+| Docs         | Swagger UI                   |
+
+---
+
+## 📁 Project Structure
+
+### 📦 `/backend` (Spring Boot)
+
+- RESTful API with secure login/registration (JWT)
+- Admin & User roles
+- CRUD: Products, Users, Cart, Orders
+- Role Based Authentication
+
+### 🌐 `/frontend` (Vite + React)
+
+- JWT-based login for User/Admin
+- Cart system
+- Admin panel for managing users, products, and orders
+- Route guards for auth
 
 ---
 
@@ -120,28 +150,81 @@ This is a Spring Boot-based backend API for an eCommerce platform named **Bmart*
 - **U/A** – Either User or Admin
 
 ---
+---
 
-## ✅ Tech Stack
+# 🌐 Frontend (Vite + React)
 
-- Spring Boot
-- Spring Security + JWT
-- Spring Data JPA
-- MySQL
-- Maven
-- REST APIs
-- Swagger (recommended for API testing)
+### ✅ Prerequisites:
+- Node.js v18+
+- Vite
+- Axios
+- React-router-dom
+
+### 🧪 Run the Frontend
+
+```bash
+npm run dev
+```
+
+Visit: [http://localhost:5173](http://localhost:5173)
 
 ---
 
-## 🚀 Run the App
+## 🧩 Frontend Routes Overview
 
-```bash
-# Clone the repo
-git clone https://github.com/your-username/bmart-backend.git
+| Route | Page | Access |
+|-------|------|--------|
+| `/` | Home | Public |
+| `/login`, `/register-user` | Auth | Public |
+| `/product` | All products | Public |
+| `/user/cart` | Cart | Auth: User |
+| `/user/order-details` | Orders | Auth: User |
+| `/user/profile/:id` | Profile | Auth: User |
+| `/admin/admin` | Admin Dashboard | Auth: Admin |
+| `/admin/add-product` | Add Product | Auth: Admin |
+| `/admin/view-user/:id` | View User | Auth: Admin |
+| `*` | 404 Not Found | All |
 
-# Build the project
-cd bmart-backend
-./mvnw clean install
+---
 
-# Run the app
-./mvnw spring-boot:run
+## 🔐 Authentication Flow
+
+- JWT token saved in `localStorage` on login
+- Axios interceptors attach token to requests
+- Protected routes with:
+  - `Privateroute` for Users
+  - `Privaterouteadmin` for Admins
+
+---
+
+## 🧪 Sample Credentials
+
+> You can pre-populate MySQL or register new accounts via APIs.
+
+```
+Admin Login:
+Email: admin@bmart.com
+Password: admin123
+
+User Login:
+Email: user@bmart.com
+Password: user123
+```
+
+---
+
+## 🚀 Deployment Tips
+
+### 🔒 Backend:
+- Host using: Render
+- Used environment variables for secrets
+
+### 🌐 Frontend:
+- Deployed on Netlify
+-  Used environment variables for secrets
+
+---
+
+## 🙌 Contributors
+
+- Afreed Shaik — Full Stack Developer
