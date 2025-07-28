@@ -1255,3 +1255,39 @@ Caused by: java.sql.SQLSyntaxErrorException: Incorrect table definition; there c
 2025-07-28T22:06:25.263+05:30  INFO 9952 --- [backend-server] [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
 2025-07-28T22:06:25.323+05:30  INFO 9952 --- [backend-server] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
 2025-07-28T22:06:25.388+05:30  INFO 9952 --- [backend-server] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2025-07-28T22:06:32.680+05:30  INFO 21344 --- [backend-server] [main] com.sb.main.BackendServerApplication     : Starting BackendServerApplication using Java 21.0.4 with PID 21344 (C:\Users\new\Downloads\ecomm-app\backend-server\target\classes started by new in C:\Users\new\Downloads\ecomm-app\backend-server)
+2025-07-28T22:06:32.682+05:30  INFO 21344 --- [backend-server] [main] com.sb.main.BackendServerApplication     : No active profile set, falling back to 1 default profile: "default"
+2025-07-28T22:06:34.151+05:30  INFO 21344 --- [backend-server] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-07-28T22:06:34.296+05:30  INFO 21344 --- [backend-server] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 120 ms. Found 8 JPA repository interfaces.
+2025-07-28T22:06:35.420+05:30  INFO 21344 --- [backend-server] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-07-28T22:06:35.436+05:30  INFO 21344 --- [backend-server] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-07-28T22:06:35.436+05:30  INFO 21344 --- [backend-server] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.43]
+2025-07-28T22:06:35.508+05:30  INFO 21344 --- [backend-server] [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-07-28T22:06:35.508+05:30  INFO 21344 --- [backend-server] [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 2760 ms
+2025-07-28T22:06:35.753+05:30  INFO 21344 --- [backend-server] [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-07-28T22:06:35.830+05:30  INFO 21344 --- [backend-server] [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.22.Final
+2025-07-28T22:06:35.876+05:30  INFO 21344 --- [backend-server] [main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-07-28T22:06:36.274+05:30  INFO 21344 --- [backend-server] [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-07-28T22:06:36.322+05:30  INFO 21344 --- [backend-server] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-07-28T22:06:36.995+05:30  INFO 21344 --- [backend-server] [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@e36bc01
+2025-07-28T22:06:36.998+05:30  INFO 21344 --- [backend-server] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-07-28T22:06:37.067+05:30  WARN 21344 --- [backend-server] [main] org.hibernate.orm.deprecation            : HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-07-28T22:06:37.086+05:30  INFO 21344 --- [backend-server] [main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 8.0.33
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-07-28T22:06:38.245+05:30  INFO 21344 --- [backend-server] [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-07-28T22:06:38.400+05:30  INFO 21344 --- [backend-server] [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-07-28T22:06:38.870+05:30  INFO 21344 --- [backend-server] [main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-07-28T22:06:39.414+05:30  INFO 21344 --- [backend-server] [main] eAuthenticationProviderManagerConfigurer : Global AuthenticationManager configured with AuthenticationProvider bean with name authProvider
+2025-07-28T22:06:39.414+05:30  WARN 21344 --- [backend-server] [main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with an AuthenticationProvider bean. UserDetailsService beans will not be used by Spring Security for automatically configuring username/password login. Consider removing the AuthenticationProvider bean. Alternatively, consider using the UserDetailsService in a manually instantiated DaoAuthenticationProvider. If the current configuration is intentional, to turn off this warning, increase the logging level of 'org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer' to ERROR
+2025-07-28T22:06:39.803+05:30  WARN 21344 --- [backend-server] [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-07-28T22:06:40.478+05:30  INFO 21344 --- [backend-server] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2025-07-28T22:06:40.485+05:30  INFO 21344 --- [backend-server] [main] com.sb.main.BackendServerApplication     : Started BackendServerApplication in 8.474 seconds (process running for 9.06)
+2025-07-28T22:07:12.963+05:30  INFO 21344 --- [backend-server] [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-07-28T22:07:12.963+05:30  INFO 21344 --- [backend-server] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-07-28T22:07:12.964+05:30  INFO 21344 --- [backend-server] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
