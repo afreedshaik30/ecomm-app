@@ -13,7 +13,8 @@ public interface UserService {
     User addUserCustomer(CustomerSignUpRequest customer)  throws UserException;
     User addUserAdmin(AdminSignUpRequest admin)  throws UserException;
     User changePassword(Integer userId, UpdatePasswordRequest customer)  throws UserException;
-    String deactivateUser(Integer userId) throws UserException;
     User getUserDetails(Integer userId)throws UserException;
     List<User> getAllUserDetails() throws UserException;
+    String deactivateUser(Integer userId) throws UserException;
+    String reactivateUser(Integer userId);
 }

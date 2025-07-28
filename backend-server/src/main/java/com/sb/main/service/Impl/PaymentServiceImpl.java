@@ -29,34 +29,36 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Transactional
     @Override
-    public Payment makePayment(Integer orderId, Integer userId) throws PaymentException {
+    public Payment makePayment(Integer orderId, Integer userId) {
+        // Fetch user
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserException("User not found in the database."));
 
-            User existingUser = userRepository.findById(userId)
-                    .orElseThrow(() -> new UserException("User not found in the database."));
+        // Fetch order
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new PaymentException("Order not found in the database."));
 
-            Order order = orderRepository.findById(orderId)
-                    .orElseThrow(() -> new PaymentException("Order not found in the database."));
+        // Create and populate Payment
+        Payment payment = new Payment();
+        payment.setPaymentAmount(order.getTotalAmount());
+        payment.setPaymentDate(LocalDateTime.now());
+        payment.setPaymentMethod(PaymentMethod.UPI); // Replace with actual method in real app
+        payment.setPaymentStatus(PaymentStatus.SUCCESSFUL); // Simulated success
+        payment.setUser(user);
+        payment.setOrder(order);
 
-            Payment payment = new Payment();
-            payment.setPaymentAmount(order.getTotalAmount());
-            payment.setPaymentDate(LocalDateTime.now());
-            payment.setPaymentMethod(PaymentMethod.UPI); // You may replace with actual selected method
-            payment.setPaymentStatus(PaymentStatus.SUCCESSFUL); // Assume payment success here
-            payment.setUser(existingUser);
-            payment.setOrder(order);
+        // Save payment
+        paymentRepository.save(payment);
 
-            // Save payment first
-            paymentRepository.save(payment);
+        // Update order with payment
+        order.setPayment(payment);
+        order.setStatus(OrderStatus.SHIPPED);
+        orderRepository.save(order);
 
-            // Link payment to order and update status
-            order.setPayment(payment);
-            order.setStatus(OrderStatus.SHIPPED);
-            orderRepository.save(order);
+        // Link payment to user
+        user.getPayments().add(payment);
+        userRepository.save(user);
 
-            // Link payment to user
-            existingUser.getPayments().add(payment);
-            userRepository.save(existingUser);
-
-            return payment;
-        }
+        return payment;
     }
+}

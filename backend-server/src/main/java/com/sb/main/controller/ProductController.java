@@ -3,8 +3,6 @@ package com.sb.main.controller;
 import com.sb.main.dto.ProductDTO;
 import com.sb.main.model.Product;
 import com.sb.main.service.Interface.ProductService;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.info.Info;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -28,20 +26,16 @@ public class ProductController {
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @PostMapping("/add")
     public ResponseEntity<Product> addProduct(@Valid @RequestBody ProductDTO productDTO) {
-        Product newProduct = productService.addProduct(productDTO);
-        return new ResponseEntity<>(newProduct, HttpStatus.CREATED);
+        return new ResponseEntity<>(productService.addProduct(productDTO), HttpStatus.CREATED);
     }
 
-    @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN')")
     @GetMapping("/product-by-name/{name}")
     public ResponseEntity<List<Product>> getProductByName(@PathVariable String name) {
-        List<Product> products = productService.getProductByName(name);
-        return new ResponseEntity<>(products, HttpStatus.OK);
+        return new ResponseEntity<>(productService.getProductByName(name), HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN')")
     @GetMapping("/all")
-    public ResponseEntity<Page<Product>> search(
+    public ResponseEntity<Page<Product>> getAllProducts(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) String keyword,
@@ -50,30 +44,23 @@ public class ProductController {
     ) {
         Sort.Direction direction = sort.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
         Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
-
-        Page<Product> products = productService.getAllProductsPaginated(keyword, pageable);
-        return new ResponseEntity<>(products, HttpStatus.OK);
+        return new ResponseEntity<>(productService.getAllProductsPaginated(keyword, pageable), HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN')")
     @GetMapping("/category/{category}")
     public ResponseEntity<List<Product>> getProductByCategory(@PathVariable String category) {
-        List<Product> products = productService.getProductByCategory(category);
-        return new ResponseEntity<>(products, HttpStatus.OK);
+        return new ResponseEntity<>(productService.getProductByCategory(category), HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN')")
     @GetMapping("/{productId}")
     public ResponseEntity<Product> getSingleProduct(@PathVariable Integer productId) {
-        Product singleProduct = productService.getSingleProduct(productId);
-        return new ResponseEntity<>(singleProduct, HttpStatus.OK);
+        return new ResponseEntity<>(productService.getSingleProduct(productId), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @PutMapping("/update/{productId}")
-    public ResponseEntity<Product> updateProduct( @PathVariable Integer productId, @Valid @RequestBody ProductDTO updatedProduct) {
-        Product updatedProductResult = productService.updateProduct(productId, updatedProduct);
-        return new ResponseEntity<>(updatedProductResult, HttpStatus.OK);
+    public ResponseEntity<Product> updateProduct(@PathVariable Integer productId, @Valid @RequestBody ProductDTO updatedProduct) {
+        return new ResponseEntity<>(productService.updateProduct(productId, updatedProduct), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")

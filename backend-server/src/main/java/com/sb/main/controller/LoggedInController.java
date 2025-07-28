@@ -1,37 +1,39 @@
-package com.sb.main.controller;
-
-import com.sb.main.dto.LoginResponse;
-import com.sb.main.exception.UserException;
-import com.sb.main.service.Interface.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-@RestController
-@RequestMapping("/bmart")
-public class LoggedInController {
-
-    @Autowired
-    private UserService userService;
-
-    @PreAuthorize("isAuthenticated()") // Open for all authenticated users
-    @GetMapping("/me")
-    public ResponseEntity<LoginResponse> getLoggedInCustomerDetailsHandler(Authentication auth) {
-        try {var customer = userService.getUserByEmailId(auth.getName());
-            LoginResponse loginData = new LoginResponse();
-            loginData.setId(customer.getUserId());
-            loginData.setFullName(customer.getFullName());
-            loginData.setLoginStatus("Success");
-
-            return new ResponseEntity<>(loginData, HttpStatus.OK);}
-        catch(UserException ex ){
-            throw new UserException(" Invalid Password");
-        }
-
-    }
-}
+//package com.sb.main.controller;
+//
+//import com.sb.main.dto.LoginResponse;
+//import com.sb.main.model.User;
+//import com.sb.main.service.Interface.UserService;
+//import lombok.RequiredArgsConstructor;
+//import org.springframework.http.ResponseEntity;
+//import org.springframework.security.access.prepost.PreAuthorize;
+//import org.springframework.security.core.Authentication;
+//import org.springframework.security.core.userdetails.UsernameNotFoundException;
+//import org.springframework.web.bind.annotation.GetMapping;
+//import org.springframework.web.bind.annotation.RequestMapping;
+//import org.springframework.web.bind.annotation.RestController;
+//
+//@RestController
+//@RequestMapping("/bmart")
+//@RequiredArgsConstructor
+//public class LoggedInController {
+//
+//    private final UserService userService;
+//
+//    @PreAuthorize("isAuthenticated()")
+//    @GetMapping("/me")
+//    public ResponseEntity<LoginResponse> getLoggedInUserDetails(Authentication authentication) {
+//        String email = authentication.getName();
+//
+//        User user = userService.getUserByEmailId(email);
+//        if (user == null) {
+//            throw new UsernameNotFoundException("User not found with email: " + email);
+//        }
+//
+//        LoginResponse response = new LoginResponse();
+//        response.setId(user.getUserId());
+//        response.setFullName(user.getFullName());
+//        response.setLoginStatus("Success");
+//
+//        return ResponseEntity.ok(response);
+//    }
+//}

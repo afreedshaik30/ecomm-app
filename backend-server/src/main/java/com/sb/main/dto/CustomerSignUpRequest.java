@@ -19,6 +19,6 @@ public class CustomerSignUpRequest {
     private String email;
 
     @NotBlank(message = "Password Is Mandatory")
-    @Size(max = 10,min = 5,message = "Password length should be more than 5 Character")
+    @Size(max = 15,min = 5,message = "Password length should be more than 5 Character")
     private String password;
 }

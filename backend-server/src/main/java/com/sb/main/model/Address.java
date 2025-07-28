@@ -12,9 +12,11 @@ import lombok.Data;
 public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer addressID;
+    @Column(name = "address_id")
+    private Integer addressId;
 
     @NotBlank(message = "Door Num is Mandatory")
+    @Column(name = "door_num")
     private String doorNum;
 
     @NotBlank(message = "Street Name Mandatory")
@@ -27,7 +29,9 @@ public class Address {
     @NotBlank(message = "City Name Mandatory")
     private String city;
 
+    @Size(min = 6, max = 6, message = "PinCode must be 6 digits")
     @NotBlank(message = "PinCode is Mandatory")
+    @Column(name = "pin_code")
     private String pinCode;
 
     @Size(max = 20)
@@ -36,6 +40,6 @@ public class Address {
 
     @ManyToOne
     @JsonIgnore
-    @JoinColumn(name = "userid")
+    @JoinColumn(name = "user_id")
     private User user;
 }

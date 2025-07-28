@@ -9,6 +9,9 @@ import com.sb.main.repository.*;
 import com.sb.main.service.Interface.OrderService;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,17 +26,14 @@ import java.util.List;
 public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
-    private final OrderItemRepository orderItemRepository;
     private final UserRepository userRepository;
-    private final ProductRepository productRepository;
     private final CartRepository cartRepository;
     private final CartItemRepository cartItemRepository;
 
     @Transactional
     @Override
     public OrderDTO placeOrder(Integer userId) throws OrderException {
-        User existingUser = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException("User Not Found In Database"));
+        User existingUser = getUserById(userId);
 
         Cart userCart = existingUser.getCart();
         if (userCart == null || userCart.getCartItems().isEmpty()) {
@@ -62,37 +62,39 @@ public class OrderServiceImpl implements OrderService {
         userCart.setTotalAmount(0.0);
         cartRepository.save(userCart);
 
-        OrderDTO orderData = new OrderDTO();
-        orderData.setOrderId(newOrder.getOrderId());
-        orderData.setOrderAmount(newOrder.getTotalAmount());
-        orderData.setStatus(newOrder.getStatus().name());
-        orderData.setPaymentStatus("PENDING");
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        orderData.setOrderDate(newOrder.getOrderDate().format(formatter));        return orderData;
+        return convertToOrderDTO(newOrder);
     }
 
     @Override
-    public Order updateOrders(Integer orderId, OrderDTO orderDTO) throws OrderException {
+    public Order updateOrders(Integer orderId, OrderDTO orderDTO) {
         throw new UnsupportedOperationException("Update Order not implemented yet.");
     }
 
     @Override
-    public Order getOrdersDetails(Integer orderId) throws OrderException {
-        return orderRepository.findById(orderId)
-                .orElseThrow(() -> new OrderException("Order not found in the database."));
-    }
+    public Order getOrdersDetails(Integer orderId) {
+        Order order = getOrderById(orderId);
+        User currentUser = getCurrentUser();
 
-    @Override
-    public List<Order> getAllUserOrder(Integer userId) throws OrderException {
-        List<Order> orders = orderRepository.getAllOrderByUserId(userId);
-        if (orders.isEmpty()) {
-            throw new OrderException("No orders found for the user in the database.");
+        if (isAdmin(currentUser) || order.getUser().getUserId().equals(currentUser.getUserId())) {
+            return order;
         }
-        return orders;
+
+        throw new AccessDeniedException("You are not authorized to access this order.");
     }
 
     @Override
-    public List<Order> viewAllOrders() throws OrderException {
+    public List<Order> getAllUserOrder(Integer userId) {
+        User currentUser = getCurrentUser();
+
+        if (!currentUser.getUserId().equals(userId) && !isAdmin(currentUser)) {
+            throw new AccessDeniedException("You are not authorized to access this user's orders.");
+        }
+
+        return orderRepository.findAllByUser_UserId(userId);
+    }
+
+    @Override
+    public List<Order> viewAllOrders() {
         List<Order> orders = orderRepository.findAll();
         if (orders.isEmpty()) {
             throw new OrderException("No orders found in the database.");
@@ -101,7 +103,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<Order> viewAllOrderByDate(Date date) throws OrderException {
+    public List<Order> viewAllOrderByDate(Date date) {
         List<Order> orders = orderRepository.findByOrderDateGreaterThanEqual(date);
         if (orders.isEmpty()) {
             throw new OrderException("No orders found for the given date.");
@@ -110,17 +112,50 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void deleteOrders(Integer userId, Integer orderId) throws OrderException {
-        User existingUser = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException("User Not Found In Database"));
+    public void deleteOrders(Integer userId, Integer orderId) {
+        Order order = getOrderById(orderId);
+        User currentUser = getCurrentUser();
 
-        Order existingOrder = orderRepository.findById(orderId)
-                .orElseThrow(() -> new OrderException("Order Not Found In Database"));
-
-        if (!existingOrder.getUser().getUserId().equals(userId)) {
-            throw new OrderException("You are not authorized to delete this order.");
+        if (!order.getUser().getUserId().equals(currentUser.getUserId())) {
+            throw new AccessDeniedException("You cannot delete another user's order.");
         }
 
-        orderRepository.delete(existingOrder);
+        orderRepository.delete(order);
+    }
+
+    // ====================
+    // Utility Methods
+    // ====================
+
+    private User getCurrentUser() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("Logged-in user not found."));
+    }
+
+    private boolean isAdmin(User user) {
+        return user.getRole().name().equals("ROLE_ADMIN");
+    }
+
+    private User getUserById(Integer userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new UserException("User not found"));
+    }
+
+    private Order getOrderById(Integer orderId) {
+        return orderRepository.findById(orderId)
+                .orElseThrow(() -> new OrderException("Order not found"));
+    }
+
+    private OrderDTO convertToOrderDTO(Order order) {
+        OrderDTO dto = new OrderDTO();
+        dto.setOrderId(order.getOrderId());
+        dto.setOrderAmount(order.getTotalAmount());
+        dto.setStatus(order.getStatus().name());
+        dto.setPaymentStatus("PENDING");
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        dto.setOrderDate(order.getOrderDate().format(formatter));
+        return dto;
     }
 }

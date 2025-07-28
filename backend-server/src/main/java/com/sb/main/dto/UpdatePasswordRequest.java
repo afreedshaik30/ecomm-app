@@ -7,6 +7,6 @@ import lombok.Data;
 @Data
 public class UpdatePasswordRequest {
     @NotBlank(message = "New password can not be Blank..")
-    @Size(min = 5,max = 10)
+    @Size(min = 5,max = 15)
     private String newPassword;
 }

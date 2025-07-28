@@ -13,7 +13,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -22,63 +21,61 @@ public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
 
     @Override
-    public Product addProduct(@Valid ProductDTO product) throws ProductException {
-        if (product == null)
-            throw new ProductException("Product Can not be Null");
+    public Product addProduct(@Valid ProductDTO productDto) {
+        if (productDto == null) {
+            throw new ProductException("Product cannot be null");
+        }
+
+        Product product = convertToEntity(productDto);
+        product.setAvailable(true); // Set default availability
+
         return productRepository.save(product);
     }
 
     @Override
-    public Product updateProduct(Integer productId, ProductDTO newProduct) throws ProductException {
-        Optional<Product> product = productRepository.findById(productId);
-        if (product.isEmpty()) {
-            throw new ProductException("Product with ID " + productId + " not found.");
-        }
-        Product existingProduct = product.get();
+    public Product updateProduct(Integer productId, ProductDTO newProduct) {
+        Product existingProduct = productRepository.findById(productId)
+                .orElseThrow(() -> new ProductException("Product with ID " + productId + " not found."));
 
-        // Update the existing product's properties with the new data
-        System.out.println("before");
+        // Update product fields
         existingProduct.setName(newProduct.getName());
         existingProduct.setImageUrl(newProduct.getImageUrl());
         existingProduct.setPrice(newProduct.getPrice());
         existingProduct.setCategory(newProduct.getCategory());
         existingProduct.setDescription(newProduct.getDescription());
-        System.out.println("after");
-        productRepository.save(existingProduct);
-        return existingProduct;
+
+        return productRepository.save(existingProduct);
     }
 
     @Override
-    public List<Product> getProductByName(String name) throws ProductException {
-        List<Product> existProductByName = productRepository.findByName(name);
-        if (existProductByName.isEmpty()) {
-            throw new ProductException("Product Not found with name " + name);
-        }
-        return existProductByName;
-    }
-
-    @Override
-    public List<Product> getAllProduct(String keyword, String sortDirection, String sortBy) throws ProductException {
-
-        Sort sort = Sort.by(sortDirection.equals("asc") ? Sort.Direction.ASC : Sort.Direction.DESC,sortBy);
-
-        List<Product> products;
-
-        if (keyword != null) {
-
-            products = productRepository.findAllByNameContainingIgnoreCase(keyword, sort);
-        } else {
-            products = productRepository.findAll(sort);
-        }
+    public List<Product> getProductByName(String name) {
+        List<Product> products = productRepository.findByName(name);
         if (products.isEmpty()) {
-            throw new ProductException("Product List Empty");
+            throw new ProductException("Product not found with name: " + name);
+        }
+        return products;
+    }
+
+    @Override
+    public List<Product> getAllProduct(String keyword, String sortDirection, String sortBy) {
+        Sort sort = Sort.by(
+                sortDirection.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC,
+                sortBy
+        );
+
+        List<Product> products = (keyword != null)
+                ? productRepository.findAllByNameContainingIgnoreCase(keyword, sort)
+                : productRepository.findAll(sort);
+
+        if (products.isEmpty()) {
+            throw new ProductException("Product list is empty.");
         }
 
         return products;
     }
 
     @Override
-    public List<Product> getProductByCategory(String category) throws ProductException {
+    public List<Product> getProductByCategory(String category) {
         List<Product> products = productRepository.findByCategoryName(category);
         if (products.isEmpty()) {
             throw new ProductException("No products found in category: " + category);
@@ -86,25 +83,37 @@ public class ProductServiceImpl implements ProductService {
         return products;
     }
 
-
     @Override
-    public void removeProduct(Integer productId) throws ProductException {
-        Product existingProduct = productRepository.findById(productId)
+    public void removeProduct(Integer productId) {
+        Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ProductException("Product with ID " + productId + " not found."));
 
-        productRepository.delete(existingProduct);
+        productRepository.delete(product);
     }
 
     @Override
     public Product getSingleProduct(Integer productId) {
-        return productRepository.findById(productId).orElseThrow(() -> new ProductException("Product not found"));
+        return productRepository.findById(productId)
+                .orElseThrow(() -> new ProductException("Product not found."));
     }
+
     @Override
     public Page<Product> getAllProductsPaginated(String keyword, Pageable pageable) {
-        if (keyword != null && !keyword.isBlank()) {
-            return productRepository.findByNameContainingIgnoreCase(keyword, pageable);
-        } else {
-            return productRepository.findAll(pageable);
-        }
+        return (keyword != null && !keyword.isBlank())
+                ? productRepository.findByNameContainingIgnoreCase(keyword, pageable)
+                : productRepository.findAll(pageable);
+    }
+
+    // ====================
+    // Utility Method
+    // ====================
+    private Product convertToEntity(ProductDTO dto) {
+        Product product = new Product();
+        product.setName(dto.getName());
+        product.setImageUrl(dto.getImageUrl());
+        product.setDescription(dto.getDescription());
+        product.setPrice(dto.getPrice());
+        product.setCategory(dto.getCategory());
+        return product;
     }
 }
